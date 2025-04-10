@@ -1,8 +1,11 @@
+import AuthorizeView from "../components/AuthorizeView"
 import MovieList from "../components/MovieList"
 
 const HomePage = () => {
     return(
-        <MovieList/>
+        <AuthorizeView>
+            <MovieList/>
+        </AuthorizeView>
     )
 }
 

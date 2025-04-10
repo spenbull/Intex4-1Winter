@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './AuthorizedHeader.css';
+import Logout from './Logout';
 
 const AuthorizedHeader: React.FC = () => {
   return (
@@ -29,9 +30,7 @@ const AuthorizedHeader: React.FC = () => {
           <Link to='/profile' className='profile-link'>
             Profile
           </Link>
-          <Link to='/logout' className='logout-link'>
-            Logout
-          </Link>
+          <Logout>Logout</Logout>
         </div>
       </div>
     </header>

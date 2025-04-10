@@ -6,6 +6,7 @@ import MoviePopup from '../components/MoviePopup';
 import ReactStars from "react-rating-stars-component";
 import StarRating from "../components/StarRating";
 import AuthorizedHeader from "../components/AuthorizedHeader";
+import AuthorizeView from "../components/AuthorizeView";
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -199,6 +200,7 @@ function TvList() {
 
     return (
         <>
+            <AuthorizeView>
             <AuthorizedHeader/>
             <br /><br /><br />
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
@@ -349,6 +351,7 @@ function TvList() {
 
             {loading && <p style={{ textAlign: 'center', marginTop: '1rem', color: '#ccc' }}>Loading more movies...</p>}
             {!hasMore && <p style={{ textAlign: 'center', marginTop: '1rem', color: '#ccc' }}>No more movies to load.</p>}
+            </AuthorizeView>
         </>
     );
 }

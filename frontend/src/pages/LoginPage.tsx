@@ -1,24 +1,72 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
-import PublicHeader from '../components/PublicHeader'; // Import your header component
+import PublicHeader from '../components/PublicHeader';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
-  const [errorVisible, setErrorVisible] = useState(false);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [rememberme, setRememberme] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    if (type === 'checkbox') {
+      setRememberme(checked);
+    } else if (name === 'email') {
+      setEmail(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorVisible(true); // Show error message
-    setTimeout(() => setErrorVisible(false), 3000); // Hide after 3 seconds
+    setError('');
+    setLoading(true);
+
+    if (!email || !password) {
+      setError('Please fill in all fields.');
+      setLoading(false);
+      return;
+    }
+
+    const loginUrl = rememberme
+      ? 'https://localhost:5000/login?useCookies=true'
+      : 'https://localhost:5000/login?useSessionCookies=true';
+
+    try {
+      const response = await fetch(loginUrl, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const contentLength = response.headers.get('content-length');
+      const data = contentLength && parseInt(contentLength, 10) > 0 ? await response.json() : null;
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Invalid email or password.');
+      }
+
+      navigate('/homepage');
+    } catch (error: any) {
+      setError(error.message || 'Error logging in.');
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className='login-body'>
       <div className='login-container'>
-        {/* Public Header */}
         <PublicHeader />
         <h2>Sign In</h2>
         <form onSubmit={handleSubmit}>
-          {/* Email Field */}
           <div className='mb-3'>
             <label htmlFor='email' className='form-label'>
               Email
@@ -30,11 +78,12 @@ const LoginPage: React.FC = () => {
               name='email'
               autoComplete='email'
               placeholder='Enter your email'
+              value={email}
+              onChange={handleChange}
               required
             />
           </div>
 
-          {/* Password Field */}
           <div className='mb-3'>
             <label htmlFor='password' className='form-label'>
               Password
@@ -46,37 +95,43 @@ const LoginPage: React.FC = () => {
               name='password'
               autoComplete='current-password'
               placeholder='Enter your password'
+              value={password}
+              onChange={handleChange}
               required
             />
           </div>
 
-          {/* Submit Button */}
-          <button type='submit' className='btn-login btn-goldenrod'>
-            Sign In
+          <div className='mb-3 form-check'>
+            <input
+              type='checkbox'
+              className='form-check-input'
+              id='rememberme'
+              name='rememberme'
+              checked={rememberme}
+              onChange={handleChange}
+            />
+            <label className='form-check-label' htmlFor='rememberme'>
+              Remember me
+            </label>
+          </div>
+
+          <button type='submit' className='btn-login btn-goldenrod' disabled={loading}>
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        {/* Social Media Buttons Container */}
         <div className='social-buttons'>
-          {/* Google Sign-In */}
           <button className='btn-social btn-google'>
-            <span className='icon'>{/* Google icon can be added here */}</span>
+            <span className='icon'>{/* Google icon here */}</span>
             Sign In with Google
           </button>
-
-          {/* Facebook Sign-In */}
           <button className='btn-social btn-facebook'>
-            <span className='icon'>
-              {/* Facebook icon can be added here */}
-            </span>
+            <span className='icon'>{/* Facebook icon here */}</span>
             Sign In with Facebook
           </button>
         </div>
 
-        {/* Error Message */}
-        <p className={`error ${errorVisible ? 'opacity-100' : 'opacity-0'}`}>
-          Invalid credentials. Please try again.
-        </p>
+        {error && <p className='error opacity-100'>{error}</p>}
       </div>
     </div>
   );

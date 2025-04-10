@@ -5,6 +5,7 @@ import MoviePopup from '../components/MoviePopup';
 import ReactStars from "react-rating-stars-component";
 import StarRating from "../components/StarRating";
 import AuthorizedHeader from "../components/AuthorizedHeader";
+import AuthorizeView from "../components/AuthorizeView";
 
 const sanitizeTitle = (title: string): string => {
     return title
@@ -143,6 +144,7 @@ function UserRecommendations() {
 
     return (
         <>
+            <AuthorizeView>
             <AuthorizedHeader/>
             <br />
             <h1 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', margin: '1.5rem 0' }}>
@@ -344,6 +346,7 @@ function UserRecommendations() {
 
             {loading && <p style={{ textAlign: 'center', marginTop: '1rem', color: '#ccc' }}>Loading more movies...</p>}
             {!hasMore && <p style={{ textAlign: 'center', marginTop: '1rem', color: '#ccc' }}>No more movies to load.</p>}
+            </AuthorizeView>
         </>
     );
 }

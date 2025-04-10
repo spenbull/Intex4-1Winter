@@ -26,6 +26,21 @@ const imageExists = async (url: string): Promise<boolean> => {
 };
 
 function MovieList() {
+    useEffect(() => {
+        fetch('https://localhost:5000/auth/me', {
+          credentials: 'include',
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error('Unauthorized');
+            return res.json();
+          })
+          .then((data) => {
+            console.log(':white_check_mark: Logged-in user:', data);
+          })
+          .catch((err) => {
+            console.error(':x: Not logged in:', err);
+          });
+      }, []);
     const [movies, setMovies] = useState<Movie[]>([]);
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
@@ -165,7 +180,7 @@ function MovieList() {
         const fetchAverageRating = async () => {
             if (!selectedMovie) return;
             try {
-                const res = await fetch(`https://localhost:5000/api/Movie/ratings/average/${selectedMovie.show_id}`);
+                const res = await fetch(`https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net/api/Movie/ratings/average/${selectedMovie.show_id}`);
                 const data = await res.json();
                 if (data.average !== null && data.average !== undefined) {
                     setAverageRating(data.average);

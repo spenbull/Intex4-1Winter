@@ -7,6 +7,7 @@ import {
 import Pagination from '../components/pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
+import AuthorizeView from '../components/AuthorizeView';
 
 const AdminMoviesPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -61,6 +62,7 @@ const AdminMoviesPage = () => {
   if (error) return <p className='text-red-500'>Error: {error}</p>;
 
   return (
+    <AuthorizeView>
     <div>
       <h1>Admin - Movies</h1>
 
@@ -173,6 +175,7 @@ const AdminMoviesPage = () => {
         }}
       />
     </div>
+    </AuthorizeView>
   );
 };
 

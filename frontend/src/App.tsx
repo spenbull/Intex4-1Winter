@@ -9,6 +9,7 @@ import Footer from './components/Footer'; // Import Footer component
 import SignUpPage from './pages/SignUpPage';
 import UserRecommendations from './pages/RecommenderPage';
 import TvList from './pages/TvShowPage';
+import { AdminAuthorizeView } from './components/AuthorizeAdminView';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
         <Routes>
           <Route path='/' element={<LandingPage />} />
           <Route path='/login' element={<LoginPage />} />
-          <Route path='/adminmovies' element={<AdminMoviesPage />} />
+          <Route path='/adminmovies' element={<AdminAuthorizeView><AdminMoviesPage /></AdminAuthorizeView>} />
           <Route
             path='/privacypolicy'
             element={

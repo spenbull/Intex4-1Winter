@@ -1,8 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MovieINTEX.Data;
 using Microsoft.OpenApi.Models;
+using MovieINTEX.API.Data;
+using MovieINTEX.Data;
+using RootkitAuth.API.Data;
+using RootkitAuth.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// ? Swagger/OpenAPI setup
+// Swagger setup
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -21,11 +24,42 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// ? Database context configuration
+// Database contexts
 builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MovieConnection")));
 
-// ? CORS policy setup
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+
+// Identity & Authorization
+// builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+//     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
+});
+
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.Name = ".AspNetCore.Identity.Application";
+    options.LoginPath = "/login";
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
+builder.Services.AddAuthorization();
+
+// CORS setup
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -40,16 +74,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-//     .AddEntityFrameworkStores<MovieDbContext>();
-
-// builder.Services.ConfigureApplicationCookie(options =>
-// {
-//     options.LoginPath = "/Account/Login";
-//     options.AccessDeniedPath = "/Account/AccessDenied";
-// });
-
-builder.Services.AddAuthorization();
+builder.Services.AddSingleton<IEmailSender<IdentityUser>, NoOpEmailSender<IdentityUser>>();
 
 var app = builder.Build();
 
@@ -67,9 +92,28 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); // Needed when Identity or JWT is enabled
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapIdentityApi<IdentityUser>();
+
+app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    context.Response.Cookies.Delete(".AspNetCore.Identity.Application");
+    return Results.Ok(new { message = "Logout successful" });
+}).RequireAuthorization();
+
+app.MapGet("/pingauth", (ClaimsPrincipal user) =>
+{
+    if (!user.Identity?.IsAuthenticated ?? false)
+    {
+        return Results.Unauthorized();
+    }
+
+    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
+    return Results.Json(new { email = email });
+}).RequireAuthorization();
 
 app.Run();

@@ -12,7 +12,12 @@ function GenreFilter({
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const response = await fetch('https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net/api/Movie/GetGenres');
+        const response = await fetch('https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net/api/Movie/GetGenres',
+          {
+            method: 'GET',
+            credentials: 'include'
+          }
+        );
         const data = await response.json();
         console.log('Fetched Genres:', data);
         setGenres(data);

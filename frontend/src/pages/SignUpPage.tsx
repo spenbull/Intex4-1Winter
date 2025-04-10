@@ -49,17 +49,49 @@ const SignUpPage: React.FC = () => {
     setPricingPlan(plan === pricingPlan ? null : plan); // Toggle selection
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === confirmPassword && pricingPlan) {
+  
+    if (password !== confirmPassword || !pricingPlan) {
+      setRegistrationStatus('error');
+      return;
+    }
+  
+    try {
+      const response = await fetch(
+        'https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net/auth/register',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // IMPORTANT: allows Identity cookie to be set
+          body: JSON.stringify({
+            email,
+            password,
+            rememberMe: false,
+          }),
+        }
+      );
+
+  
+      if (!response.ok) {
+        throw new Error('Registration failed.');
+      }
+  
+      const result = await response.json();
+      console.log('✅ Registration success:', result);
       setRegistrationStatus('success');
+  
       setTimeout(() => {
-        navigate('/'); // Navigate back to the Landing page after successful account creation
+        navigate('/');
       }, 3000);
-    } else {
+    } catch (error) {
+      console.error('🚨 Registration error:', error);
       setRegistrationStatus('error');
     }
   };
+  
 
   return (
     <div className='sign-up-page container'>
