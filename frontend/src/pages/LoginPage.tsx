@@ -3,6 +3,9 @@ import './LoginPage.css';
 import PublicHeader from '../components/PublicHeader';
 import { useNavigate } from 'react-router-dom';
 
+// ✅ Hardcoded deployed backend URL
+const API_BASE_URL = 'https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net';
+
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -34,8 +37,8 @@ const LoginPage: React.FC = () => {
     }
 
     const loginUrl = rememberme
-      ? 'https://localhost:5000/login?useCookies=true'
-      : 'https://localhost:5000/login?useSessionCookies=true';
+      ? `${API_BASE_URL}/login?useCookies=true`
+      : `${API_BASE_URL}/login?useSessionCookies=true`;
 
     try {
       const response = await fetch(loginUrl, {
@@ -46,7 +49,8 @@ const LoginPage: React.FC = () => {
       });
 
       const contentLength = response.headers.get('content-length');
-      const data = contentLength && parseInt(contentLength, 10) > 0 ? await response.json() : null;
+      const data =
+        contentLength && parseInt(contentLength, 10) > 0 ? await response.json() : null;
 
       if (!response.ok) {
         throw new Error(data?.message || 'Invalid email or password.');

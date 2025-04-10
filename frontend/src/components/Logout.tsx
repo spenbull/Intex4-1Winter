@@ -1,5 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
+// ✅ Hardcoded Azure backend URL
+const API_BASE_URL = 'https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net';
+
 function Logout(props: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
@@ -7,7 +10,7 @@ function Logout(props: { children: React.ReactNode }) {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://localhost:5000/logout', {
+      const response = await fetch(`${API_BASE_URL}/logout`, {
         method: 'POST',
         credentials: 'include', // Ensure cookies are sent
         headers: {

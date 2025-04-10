@@ -5,6 +5,7 @@ interface User {
   roles: string[];
 }
 
+const API_BASE_URL = 'https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net';
 const UserContext = createContext<User | null>(null);
 
 function AuthorizeView(props: { children: React.ReactNode }) {
@@ -16,7 +17,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const response = await fetch('https://localhost:5000/pingauth', {
+        const response = await fetch(`${API_BASE_URL}/pingauth`, {
           method: 'GET',
           credentials: 'include',
         });
@@ -68,8 +69,7 @@ export function AdminAuthorizeView(props: { children: React.ReactNode }) {
   useEffect(() => {
     async function fetchAdminStatus() {
       try {
-        // Step 1: Get user email
-        const pingRes = await fetch('https://localhost:5000/pingauth', {
+        const pingRes = await fetch(`${API_BASE_URL}/pingauth`, {
           method: 'GET',
           credentials: 'include',
         });
@@ -80,8 +80,7 @@ export function AdminAuthorizeView(props: { children: React.ReactNode }) {
         const email = pingData.email;
         console.log('[AdminAuthorizeView] Email from pingauth:', email);
 
-        // Step 2: Get roles for that user
-        const roleRes = await fetch(`https://localhost:5000/role/getuserroles?email=${email}`, {
+        const roleRes = await fetch(`${API_BASE_URL}/role/getuserroles?email=${email}`, {
           method: 'GET',
           credentials: 'include',
         });

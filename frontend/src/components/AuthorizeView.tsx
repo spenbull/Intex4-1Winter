@@ -1,29 +1,26 @@
 import React, { useState, useEffect, createContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
-const UserContext = createContext<User | null>(null);
+const API_BASE_URL = 'https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net';
 
 interface User {
   email: string;
 }
 
+const UserContext = createContext<User | null>(null);
+
 function AuthorizeView(props: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true); // add a loading state
-  //const navigate = useNavigate();
-  let emptyuser: User = { email: '' };
-
+  const [loading, setLoading] = useState<boolean>(true);
+  const emptyuser: User = { email: '' };
   const [user, setUser] = useState(emptyuser);
 
   useEffect(() => {
     async function fetchWithRetry(url: string, options: any) {
       try {
         const response = await fetch(url, options);
-        //console.log('AuthorizeView: Raw Response:', response);
 
         const contentType = response.headers.get('content-type');
-
-        // Ensure response is JSON before parsing
         if (!contentType || !contentType.includes('application/json')) {
           throw new Error('Invalid response format from server');
         }
@@ -43,7 +40,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
       }
     }
 
-    fetchWithRetry('https://localhost:5000/pingauth', {
+    fetchWithRetry(`${API_BASE_URL}/pingauth`, {
       method: 'GET',
       credentials: 'include',
     });
@@ -55,7 +52,9 @@ function AuthorizeView(props: { children: React.ReactNode }) {
 
   if (authorized) {
     return (
-      <UserContext.Provider value={user}>{props.children}</UserContext.Provider>
+      <UserContext.Provider value={user}>
+        {props.children}
+      </UserContext.Provider>
     );
   }
 
@@ -65,7 +64,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
 export function AuthorizedUser(props: { value: string }) {
   const user = React.useContext(UserContext);
 
-  if (!user) return null; // Prevents errors if context is null
+  if (!user) return null;
 
   return props.value === 'email' ? <>{user.email}</> : null;
 }
