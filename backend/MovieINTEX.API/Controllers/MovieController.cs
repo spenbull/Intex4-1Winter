@@ -8,7 +8,6 @@ namespace MovieINTEX.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class MovieController : ControllerBase
     {
         private MovieDbContext _movieContext;

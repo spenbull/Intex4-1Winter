@@ -35,11 +35,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-
-// Identity & Authorization
-// builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-//     .AddEntityFrameworkStores<ApplicationDbContext>();
-
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
@@ -78,7 +73,10 @@ builder.Services.AddSingleton<IEmailSender<IdentityUser>, NoOpEmailSender<Identi
 
 var app = builder.Build();
 
-// Middleware pipeline
+// 🔥 DEBUG: Enable detailed error messages even in production temporarily
+app.UseDeveloperExceptionPage();
+
+// Swagger UI (enabled in dev only)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -88,6 +86,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Middleware pipeline
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();

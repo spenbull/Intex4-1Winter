@@ -28,7 +28,10 @@ export const fetchMovies = async (
             url += `&search=${encodeURIComponent(searchTerm)}`;
         }
 
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: 'include',  // Include credentials (cookies)
+        });
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -50,23 +53,20 @@ export const fetchMovies = async (
     }
 };
 
-
-
-
-
 // This is CRUD stuff we will need 
 
-export const addMovie =async (newMovie:Movie): Promise<Movie> => {
-    try{
+export const addMovie =async (newMovie: Movie): Promise<Movie> => {
+    try {
         const response = await fetch(`${API_URL}/AddMovie`, {
             method: 'POST',
             headers: {
-                'Content-Type' : 'application/json',
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(newMovie)
+            body: JSON.stringify(newMovie),
+            credentials: 'include', // Include credentials (cookies)
         });
 
-        if (!response.ok){
+        if (!response.ok) {
             throw new Error('Failed to add movie');
         }
 
@@ -80,46 +80,48 @@ export const addMovie =async (newMovie:Movie): Promise<Movie> => {
 
 export const updateMovie = async (show_id: string, updatedMovie: Movie): Promise<Movie> => {
     try {
-      const response = await fetch(`${API_URL}/updatemovie/${show_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedMovie),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to update movie');
-      }
-  
-      return await response.json();
-    } catch (error) {
-      console.error('Error updating movie:', error);
-      throw error;
-    }
-  };
-  
+        const response = await fetch(`${API_URL}/updatemovie/${show_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedMovie),
+            credentials: 'include', // Include credentials (cookies)
+        });
 
-  export const deleteMovie = async (show_id: string): Promise<void> => {
-    try {
-      const response = await fetch(`${API_URL}/deletemovie/${show_id}`, {
-        method: 'DELETE'
-      });
-  
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Delete response error:", errorText);
-        throw new Error('Failed to delete movie');
-      }
+        if (!response.ok) {
+            throw new Error('Failed to update movie');
+        }
+
+        return await response.json();
     } catch (error) {
-      console.error('Error deleting movie:', error);
-      throw error;
+        console.error('Error updating movie:', error);
+        throw error;
     }
-  };
-  
+};
+
+export const deleteMovie = async (show_id: string): Promise<void> => {
+    try {
+        const response = await fetch(`${API_URL}/deletemovie/${show_id}`, {
+            method: 'DELETE',
+            credentials: 'include', // Include credentials (cookies)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Delete response error:", errorText);
+            throw new Error('Failed to delete movie');
+        }
+    } catch (error) {
+        console.error('Error deleting movie:', error);
+        throw error;
+    }
+};
 
 export const fetchMovieById = async (id: string): Promise<Movie> => {
-    const response = await fetch(`${API_URL}/GetMovie/${id}`);
+    const response = await fetch(`${API_URL}/GetMovie/${id}`, {
+        credentials: 'include', // Include credentials (cookies)
+    });
     if (!response.ok) {
         throw new Error('Failed to fetch movie');
     }
@@ -128,34 +130,39 @@ export const fetchMovieById = async (id: string): Promise<Movie> => {
 
 export const fetchSimilarMovies = async (show_id: string): Promise<Movie[]> => {
     try {
-      const response = await fetch(`${API_URL}/GetSimilarMovies/${show_id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch similar movies');
-      }
-      const data = await response.json();
-      return data.movies || [];
+        const response = await fetch(`${API_URL}/GetSimilarMovies/${show_id}`, {
+            credentials: 'include', // Include credentials (cookies)
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch similar movies');
+        }
+        const data = await response.json();
+        return data.movies || [];
     } catch (error) {
-      console.error("Error fetching similar movies:", error);
-      return [];
+        console.error("Error fetching similar movies:", error);
+        return [];
     }
-  };
-  
+};
 
 export const fetchAverageRating = async (show_id: string): Promise<number | null> => {
     try {
-      const response = await fetch(`${API_URL}/ratings/average/${show_id}`);
-      if (!response.ok) throw new Error("Failed to fetch average rating");
-      const data = await response.json();
-      return data.average ?? null;
+        const response = await fetch(`${API_URL}/ratings/average/${show_id}`, {
+            credentials: 'include', // Include credentials (cookies)
+        });
+        if (!response.ok) throw new Error("Failed to fetch average rating");
+        const data = await response.json();
+        return data.average ?? null;
     } catch (error) {
-      console.error("Error fetching average rating:", error);
-      return null;
+        console.error("Error fetching average rating:", error);
+        return null;
     }
-  };
+};
 
-  export const fetchUserRecommendations = async (): Promise<Record<string, Movie[]>> => {
+export const fetchUserRecommendations = async (): Promise<Record<string, Movie[]>> => {
     try {
-        const response = await fetch(`${API_URL}/UserRecommendations`);
+        const response = await fetch(`${API_URL}/UserRecommendations`, {
+            credentials: 'include', // Include credentials (cookies)
+        });
         if (!response.ok) {
             throw new Error("Failed to fetch user recommendations");
         }
