@@ -1,11 +1,13 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { Movie } from '../types/Movie';
 import { updateMovie } from '../api/MoviesAPI';
+import './admin-styles/EditMovieForm.css';
 
 interface EditMovieFormProps {
   movie: Movie;
   onSuccess: () => void;
   onCancel: () => void;
+  theme?: 'light' | 'dark';
 }
 
 const genreOptions = [
@@ -19,10 +21,10 @@ const genreOptions = [
   "TV Dramas", "Talk Shows TV Comedies", "Thrillers"
 ];
 
-const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
+const EditMovieForm = ({ movie, onSuccess, onCancel, theme = 'light' }: EditMovieFormProps) => {
   const [formData, setFormData] = useState<Movie>({ ...movie });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -48,111 +50,112 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Edit Movie</h2>
+    <div className="admin-modal-overlay" onClick={onCancel} data-theme={theme}>
+      <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+        <form onSubmit={handleSubmit} className="admin-form">
+          <h2 className="admin-form-title">Edit Movie</h2>
 
-      <label>
-        Type:
-        <select name="type" value={formData.type} onChange={handleChange}>
-          <option value="">Select Type</option>
-          <option value="Movie">Movie</option>
-          <option value="TV Show">TV Show</option>
-        </select>
-      </label>
+          <div className="admin-form-sections">
+            {/* Basic Information Section */}
+            <div className="admin-form-section">
+              <h3 className="admin-form-section-title">Basic Information</h3>
+              <div className="admin-form-grid">
+                <label>
+                  Type:
+                  <select name="type" value={formData.type} onChange={handleChange}>
+                    <option value="">Select Type</option>
+                    <option value="Movie">Movie</option>
+                    <option value="TV Show">TV Show</option>
+                  </select>
+                </label>
 
-      <label>
-        Title:
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-        />
-      </label>
+                <label>
+                  Title:
+                  <input type="text" name="title" value={formData.title} onChange={handleChange} />
+                </label>
 
-      <label>
-        Director:
-        <input
-          type="text"
-          name="director"
-          value={formData.director}
-          onChange={handleChange}
-        />
-      </label>
+                <label>
+                  Director:
+                  <input type="text" name="director" value={formData.director} onChange={handleChange} />
+                </label>
 
-      <label>
-        Cast:
-        <input
-          type="text"
-          name="cast"
-          value={formData.cast}
-          onChange={handleChange}
-        />
-      </label>
+                <label>
+                  Cast:
+                  <input type="text" name="cast" value={formData.cast} onChange={handleChange} />
+                </label>
+              </div>
+            </div>
 
-      <label>
-        Country:
-        <input
-          type="text"
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
-        />
-      </label>
+            {/* Metadata Section */}
+            <div className="admin-form-section">
+              <h3 className="admin-form-section-title">Metadata</h3>
+              <div className="admin-form-grid">
+                <label>
+                  Country:
+                  <input type="text" name="country" value={formData.country} onChange={handleChange} />
+                </label>
 
-      <label>
-        Release Year:
-        <input
-          type="number"
-          name="release_year"
-          value={formData.release_year || ''}
-          onChange={handleChange}
-        />
-      </label>
+                <label>
+                  Release Year:
+                  <input type="number" name="release_year" value={formData.release_year || ''} onChange={handleChange} />
+                </label>
 
-      <label>
-        Rating:
-        <input
-          type="text"
-          name="rating"
-          value={formData.rating}
-          onChange={handleChange}
-        />
-      </label>
+                <label>
+                  Rating:
+                  <input type="text" name="rating" value={formData.rating} onChange={handleChange} />
+                </label>
 
-      <label>
-        Duration:
-        <input
-          type="text"
-          name="duration"
-          value={formData.duration}
-          onChange={handleChange}
-        />
-      </label>
+                <label>
+                  Duration:
+                  <input type="text" name="duration" value={formData.duration} onChange={handleChange} />
+                </label>
+              </div>
+            </div>
 
-      <label>
-        Description:
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
-      </label>
+            {/* Description Section */}
+            <div className="admin-form-section">
+              <h3 className="admin-form-section-title">Description</h3>
+              <div className="admin-form-grid">
+                <label className="admin-form-full-width">
+                  Description:
+                  <textarea 
+                    name="description" 
+                    value={formData.description} 
+                    onChange={handleChange}
+                    rows={4}
+                  />
+                </label>
+              </div>
+            </div>
 
-      <label>
-        Genre:
-        <select name="genres" value={formData.genres} onChange={handleChange}>
-          <option value="">Select Genre</option>
-          {genreOptions.map((genre) => (
-            <option key={genre} value={genre}>{genre}</option>
-          ))}
-        </select>
-      </label>
+            {/* Genre Section */}
+            <div className="admin-form-section">
+              <h3 className="admin-form-section-title">Genre</h3>
+              <div className="admin-form-grid">
+                <label className="admin-form-full-width">
+                  Genre:
+                  <select name="genres" value={formData.genres} onChange={handleChange}>
+                    <option value="">Select Genre</option>
+                    {genreOptions.map((genre) => (
+                      <option key={genre} value={genre}>{genre}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </div>
+          </div>
 
-      <button type="submit">Update Movie</button>
-      <button type="button" onClick={onCancel}>Cancel</button>
-    </form>
+          <div className="admin-form-actions">
+            <button type="submit" className="admin-btn admin-btn-add">
+              Edit Movie
+            </button>
+            <button type="button" onClick={onCancel} className="admin-btn admin-btn-cancel">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

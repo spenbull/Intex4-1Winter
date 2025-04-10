@@ -1,92 +1,175 @@
-/* Private Header Styling */
-.private-header {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.9);
-    padding: 1rem 2rem;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+.public-header {
+  background-color: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+}
+
+.header-container {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-style: italic;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  position: relative;
+  padding-right: 1rem;
+}
+
+.brand-logo::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-left: auto;
+  padding-right: 1rem;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.nav-link:hover {
+  opacity: 0.8;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-toggle {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: #fff;
+  transition: opacity 0.2s ease;
+}
+
+.search-toggle:hover {
+  opacity: 0.8;
+}
+
+.search-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.search-form {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: #000;
+  padding: 0.5rem;
+  min-width: 250px;
+  animation: slideDown 0.2s ease-out;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.login-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.login-link:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
   .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Space between logo, nav, and user menu */
-    max-width: 1280px;
-    margin: 0 auto;
+    padding: 0 1rem;
   }
-  
-  /* Brand logo styling */
-  .brand-logo a {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
-    color: goldenrod;
-    transition: color 0.3s ease;
+
+  .brand-logo {
+    font-size: 1.25rem;
   }
-  
-  .brand-logo a:hover {
-    color: gold; /* Bright gold on hover */
-  }
-  
-  /* Navigation styling */
-  .navigation ul {
-    display: flex;
+
+  .main-nav {
     gap: 1.5rem;
-    list-style: none;
   }
-  
-  .navigation ul li a {
-    text-decoration: none;
-    font-size: 1rem;
-    color: white;
-    transition: color 0.3s ease;
+
+  .search-form {
+    position: fixed;
+    top: 3rem;
+    left: 0;
+    right: 0;
+    margin: 0;
+    border-radius: 0;
   }
-  
-  .navigation ul li a:hover {
-    color: gold; /* Gold on hover */
-  }
-  
-  /* User menu styling */
-  .user-menu .profile-link,
-  .user-menu .logout-link {
-    text-decoration: none;
-    font-size: 1rem;
-    margin-left: 1rem;
-    color: white;
-  }
-  
-  .user-menu .logout-link:hover {
-    color: yellow; /* Yellow on hover */
-  }
-  
-  .logout {
-    color: #fff;
-    font-size: large;
-    font-weight: bold;
-  }
-  
-  /* Media Queries for Mobile Devices */
-  @media (max-width: 768px) {
-    .private-header {
-      padding: 1rem;
-    }
-  
-    .header-container {
-      flex-direction: column; /* Stack elements vertically */
-      text-align: center; /* Center text on small screens */
-    }
-  
-    .brand-logo a {
-      font-size: 1.25rem; /* Adjust font size for small screens */
-    }
-  
-    .navigation ul {
-      flex-direction: column; /* Stack nav items vertically */
-      gap: 1rem;
-    }
-  
-    .navigation ul li a {
-      font-size: 1.2rem; /* Increase font size for readability on small screens */
-    }
-  }
+}

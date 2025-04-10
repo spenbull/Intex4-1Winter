@@ -35,6 +35,13 @@ const SignUpPage: React.FC = () => {
       setPasswordMatchError(null);
     }
 
+    if (password.length < 16) {
+      setPasswordMatchError(
+        'Password must be at least 16 characters. Consider a passphrase.',
+      );
+      return;
+    }
+
     setStep(step + 1);
   };
 
@@ -119,12 +126,17 @@ const SignUpPage: React.FC = () => {
             <div className='form-group'>
               <input
                 type='password'
-                placeholder='Enter your password'
+                placeholder='Enter A Long Password (Min 16 Characters)'
                 className='form-control mb-3'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <p
+                className={`small ${password.length >= 16 ? 'text-success' : 'text-muted'}`}
+              >
+                {password.length} / 16 characters
+              </p>
               <input
                 type='password'
                 placeholder='Confirm your password'

@@ -24,9 +24,18 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+
+
 // Database contexts
+// Get base connection string from appsettings.json (with placeholder for password)
+var rawConnectionString = builder.Configuration.GetConnectionString("MovieConnection");
+// Get the actual password from an environment variable
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+// Replace the placeholder with the actual password
+var finalConnectionString = rawConnectionString.Replace("{DB_PASSWORD}", dbPassword);
+// Inject the secure, final connection string into your DbContext
 builder.Services.AddDbContext<MovieDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MovieConnection")));
+    options.UseSqlServer(finalConnectionString));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));

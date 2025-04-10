@@ -1,133 +1,184 @@
 /* General Layout */
 .login-body {
-    background-color: #242424;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    padding: 0 15px; /* Optional: Padding around the body for better alignment */
-  }
-  
-  /* Login Container */
-  .login-container {
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 4.5rem;
-    border-radius: 8px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.7);
-    max-width: 1200px; /* Increased max-width for a wider container */
-    width: 100%;
-    margin: 0 10px; /* Optional: Add margin for spacing */
-  }
-  
-  /* Title */
-  .login-container h2 {
-    color: goldenrod;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Input Fields */
-  .login-container input {
-    width: 100%; /* Make input fields occupy the full width */
-    padding: 1rem; /* Reduced padding for shorter input fields */
-    margin: 0.8rem 0; /* Increased margin between inputs */
-    border-radius: 4px;
-    border: 1px solid #444;
-    background-color: #c2c2c2;
-    color: white;
-    font-size: 1.4rem; /* Slightly larger font size */
-  }
-  
-  .login-container input:focus {
-    outline: none;
-    border-color: goldenrod;
-  }
-  
-  /* Primary Login Button */
-  .login-container .login-btn {
-    padding: 1.2rem;
-    background-color: goldenrod;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%; /* Full-width button */
-    font-size: 1.4rem; /* Larger font size */
-    font-weight: bold;
-    margin-top: 2rem; /* Increased margin above the button */
-    transition: background-color 0.3s ease;
-    display: flex; /* Enable flexbox */
-    justify-content: center; /* Center the button text */
-    align-items: center; /* Center the button text vertically */
-  }
-  
-  .login-container .login-btn:hover {
-    background-color: gold;
-  }
-  
-  /* Social Media Buttons */
-  .btn-social {
-    padding: 1.2rem; /* Adjusted padding for buttons */
-    color: white;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%; /* Full-width buttons */
-    margin: 1.5rem 0; /* Increased spacing between buttons */
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Google Sign In */
-  .btn-google {
-    background-color: #db4437; /* Google Red */
-  }
-  
-  .btn-google:hover {
-    background-color: #c1351d; /* Google Dark Red */
-  }
-  
-  .btn-google .icon {
-    margin-right: 0.5rem;
-  }
-  
-  /* Facebook Sign In */
-  .btn-facebook {
-    background-color: #3b5998; /* Facebook Blue */
-  }
-  
-  .btn-facebook:hover {
-    background-color: #2d4373; /* Facebook Dark Blue */
-  }
-  
-  /* Error Message */
-  .error {
-    color: red;
-    text-align: center;
-    margin-top: 1rem;
-    transition: opacity 0.3s ease;
-  }
-  
-  .error.opacity-100 {
-    opacity: 1;
-  }
-  
-  .error.opacity-0 {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+              url('/Netflix-login-homepage.jpg') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+}
+
+/* Login Container */
+.login-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  margin-top: 80px;
+}
+
+.login-form-wrapper {
+  background: rgba(0, 0, 0, 0.75);
+  padding: 3rem 4rem;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 450px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.login-form-wrapper h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #ffffff;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  background: #333;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  background: #454545;
+}
+
+.form-group input::placeholder {
+  color: #8c8c8c;
+}
+
+.login-btn {
+  padding: 1rem;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #e50914;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.login-btn:hover {
+  background-color: #f40612;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: #b3b3b3;
+  font-size: 0.875rem;
+}
+
+.remember-me input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.help-text {
+  color: #b3b3b3;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.signup-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.signup-link:hover {
+  color: #e50914;
+}
+
+.error {
+  color: #e50914;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: rgba(229, 9, 20, 0.1);
+  border-radius: 4px;
+  transition: opacity 0.3s ease;
+}
+
+.error.opacity-100 {
+  opacity: 1;
+}
+
+.error.opacity-0 {
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
     opacity: 0;
+    transform: translateY(20px);
   }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .login-container {
-      padding: 2rem;
-      max-width: 100%; /* Allow the login container to fill up on small screens */
-    }
-  
-    .login-container input,
-    .login-container .login-btn {
-      font-size: 1rem; /* Adjust font size slightly */
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 1rem;
+    margin-top: 60px;
+  }
+
+  .login-form-wrapper {
+    padding: 2rem;
+  }
+
+  .login-form-wrapper h2 {
+    font-size: 1.75rem;
+  }
+
+  .form-group input,
+  .login-btn {
+    padding: 0.875rem 1rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .login-form-wrapper,
+  .login-btn,
+  .form-group input,
+  .signup-link {
+    transition: none;
+    animation: none;
+  }
+}

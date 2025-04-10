@@ -1,42 +1,31 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 import PublicHeader from '../components/PublicHeader';
-import { useNavigate } from 'react-router-dom';
 
-// ✅ Hardcoded deployed backend URL
+// ✅ Deployed backend
 const API_BASE_URL = 'https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [rememberme, setRememberme] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    if (type === 'checkbox') {
-      setRememberme(checked);
-    } else if (name === 'email') {
-      setEmail(value);
-    } else if (name === 'password') {
-      setPassword(value);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrorMessage('');
     setLoading(true);
 
     if (!email || !password) {
-      setError('Please fill in all fields.');
+      setErrorMessage('Please fill in all fields.');
       setLoading(false);
       return;
     }
 
-    const loginUrl = rememberme
+    const loginUrl = rememberMe
       ? `${API_BASE_URL}/login?useCookies=true`
       : `${API_BASE_URL}/login?useSessionCookies=true`;
 
@@ -57,85 +46,63 @@ const LoginPage: React.FC = () => {
       }
 
       navigate('/homepage');
-    } catch (error: any) {
-      setError(error.message || 'Error logging in.');
-      console.error('Login failed:', error);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Error logging in.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className='login-body'>
-      <div className='login-container'>
-        <PublicHeader />
-        <h2>Sign In</h2>
-        <form onSubmit={handleSubmit}>
-          <div className='mb-3'>
-            <label htmlFor='email' className='form-label'>
-              Email
-            </label>
-            <input
-              type='email'
-              className='form-control'
-              id='email'
-              name='email'
-              autoComplete='email'
-              placeholder='Enter your email'
-              value={email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className='mb-3'>
-            <label htmlFor='password' className='form-label'>
-              Password
-            </label>
-            <input
-              type='password'
-              className='form-control'
-              id='password'
-              name='password'
-              autoComplete='current-password'
-              placeholder='Enter your password'
-              value={password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className='mb-3 form-check'>
-            <input
-              type='checkbox'
-              className='form-check-input'
-              id='rememberme'
-              name='rememberme'
-              checked={rememberme}
-              onChange={handleChange}
-            />
-            <label className='form-check-label' htmlFor='rememberme'>
-              Remember me
-            </label>
-          </div>
-
-          <button type='submit' className='btn-login btn-goldenrod' disabled={loading}>
-            {loading ? 'Signing In...' : 'Sign In'}
-          </button>
-        </form>
-
-        <div className='social-buttons'>
-          <button className='btn-social btn-google'>
-            <span className='icon'>{/* Google icon here */}</span>
-            Sign In with Google
-          </button>
-          <button className='btn-social btn-facebook'>
-            <span className='icon'>{/* Facebook icon here */}</span>
-            Sign In with Facebook
-          </button>
+    <div className="login-body">
+      <PublicHeader />
+      <div className="login-container">
+        <div className="login-form-wrapper">
+          <h2>Sign In</h2>
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email or phone number"
+                autoComplete="email"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                autoComplete="current-password"
+                required
+              />
+            </div>
+            <button type="submit" className="login-btn" disabled={loading}>
+              {loading ? 'Signing In...' : 'Sign In'}
+            </button>
+            <div className="remember-me">
+              <input
+                type="checkbox"
+                id="remember"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <label htmlFor="remember">Remember me</label>
+            </div>
+            <p className="help-text">
+              Need help?{' '}
+              <a href="#" className="signup-link">
+                Sign up now
+              </a>
+            </p>
+          </form>
+          <p className={`error ${errorMessage ? 'opacity-100' : 'opacity-0'}`}>
+            {errorMessage}
+          </p>
         </div>
-
-        {error && <p className='error opacity-100'>{error}</p>}
       </div>
     </div>
   );

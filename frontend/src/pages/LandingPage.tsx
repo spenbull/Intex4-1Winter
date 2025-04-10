@@ -1,66 +1,55 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
+import { fetchMovies } from '../api/MoviesAPI';
+import { Movie } from '../types/Movie';
+import MoviePreviewPopup from '../components/MoviePreviewPopupProps' // Import the preview popup
 import './LandingPage.css';
-import PublicHeader from '../components/PublicHeader'; // Import your header component
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const moviePosters = [
-  '1 Chance 2 Dance.jpg',
-  '2 Hearts.jpg',
-  '3 Idiots.jpg',
-  '4th Republic.jpg',
-  '5 Star Christmas.jpg',
-  '6 Bullets.jpg',
-  '7 Seven.jpg',
-  '9.jpg',
-  '10 jours en or.jpg',
-  '12 Years Promise.jpg',
-  'How to Train Your Dragon 2.jpg',
-  '14 Cameras.jpg',
-  '15Aug.jpg',
-  '16 Blocks.jpg',
-  '17 Again.jpg',
-  '18 Presents.jpg',
-  '20th Century Women.jpg',
-  'Avengers Infinity War.jpg',
-  '22Jul.jpg',
-  'Zoids Wild.jpg',
-];
+const sanitizeTitle = (title: string): string => {
+  return title
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-zA-Z0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+// Simulate being logged in for testing purposes
+const isLoggedIn = false; // Change to `false` for testing restricted access
 
 const LandingPage: React.FC = () => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [email, setEmail] = useState('');
-  const navigate = useNavigate(); // Hook for navigation
-  const [showCookieBanner, setShowCookieBanner] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+  const [featuredMovies, setFeaturedMovies] = useState<Movie[]>([]);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null); // Track selected movie
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsVisible(true);
+
+    const loadFeatured = async () => {
+      try {
+        const data = await fetchMovies(20, 1, [], '');
+        if (Array.isArray(data.movies)) {
+          setFeaturedMovies(data.movies);
+        }
+      } catch (err) {
+        console.error('Failed to fetch featured movies:', err);
+      }
+    };
+
+    loadFeatured();
+  }, []);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
   const handleGetStarted = () => {
-    // Navigate to the sign-up page, passing the email in state
     navigate('/sign-up', { state: { email } });
-  };
-
-  const faqs = [
-    {
-      question: 'How do I sign up?',
-      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-    {
-      question: 'What types of movies are available?',
-      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-    {
-      question: 'How does the recommendation system work?',
-      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-  ];
-
-  const toggleFAQ = (index: number) => {
-    setExpandedIndex(index === expandedIndex ? null : index);
   };
 
   const settings = {
@@ -76,135 +65,106 @@ const LandingPage: React.FC = () => {
     draggable: true,
     swipeToSlide: true,
     arrows: false,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 4,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 3,
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2,
+        }
+      }
+    ]
   };
 
   return (
-    <div className='landing-page container-fluid'>
-      {/* Public Header */}
-      <PublicHeader />
-
+    <div className={`landing-page ${isVisible ? 'visible' : ''}`}>
+      <div className="login-button-wrapper">
+        <button
+          className="login-button"
+          onClick={() => navigate('/login')}
+          aria-label="Log in"
+        >
+          Log In
+        </button>
+      </div>
       {/* Hero Section */}
-      <header className='hero bg-dark text-light'>
-        <div className='hero-overlay' />
-        <div className='hero-content text-center container'>
-          <h1 className='display-4 fw-bold'>
-            Unlimited movies, TV shows, and more.
-          </h1>
-          <p className='lead'>Watch anywhere. Cancel anytime.</p>
-          <div className='cta d-flex justify-content-center mt-4'>
+      <section className="hero">
+        <div className="hero-overlay" />
+        <div className="hero-content">
+          <div className="hero-text">
+            <h1 className="hero-title">Stream Bold. Discover Niche.</h1>
+            <p className="hero-subtitle">Your Home for Underrated Cinema</p>
+          </div>
+          <div className="cta-container">
             <input
-              type='email'
+              type="email"
               value={email}
               onChange={handleEmailChange}
-              placeholder='Email address'
-              className='form-control me-2'
-              style={{ maxWidth: '300px' }}
+              placeholder="Enter your email"
+              className="email-input"
+              aria-label="Email address"
             />
-            <button className='btn btn-danger' onClick={handleGetStarted}>
+            <button 
+              className="cta-button"
+              onClick={handleGetStarted}
+              aria-label="Get Started"
+            >
               Get Started
             </button>
           </div>
         </div>
-      </header>
+      </section>
 
-      {/* Carousel Section */}
-      <section className='carousel-section bg-black py-5'>
-        <div className='container text-light'>
-          <h2 className='mb-4'>Featured Originals</h2>
-          <Slider {...settings}>
-            {moviePosters.map((poster, index) => (
-              <div key={index} className='px-2'>
-            <img
-              src={`https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(poster)}`}
-              alt={`Movie Poster ${index + 1}`}
-              className='img-fluid rounded'
-            />
-
-              </div>
-            ))}
+      {/* Featured Section */}
+      <section className="featured-section">
+        <div className="featured-content">
+          <h2 className="section-title">Featured Originals</h2>
+          <Slider {...settings} className="movie-carousel">
+            {featuredMovies.map((movie) => {
+              const posterUrl = `https://moviepostersforintex.blob.core.windows.net/movieposters/${encodeURIComponent(sanitizeTitle(movie.title))}.jpg`;
+              return (
+                <div key={movie.show_id} className="movie-slide" onClick={() => setSelectedMovie(movie)}>
+                  <img
+                    src={posterUrl}
+                    alt={movie.title}
+                    className="movie-poster"
+                    loading="lazy"
+                    onError={(e) => (e.currentTarget as HTMLImageElement).src = "/Click.jpg"}
+                  />
+                </div>
+              );
+            })}
           </Slider>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className='faq bg-light py-5'>
-        <div className='container'>
-          <h2 className='mb-4'>Frequently Asked Questions</h2>
-          <div className='accordion'>
-            {faqs.map((faq, index) => (
-              <div key={index} className='faq-item mb-3'>
-                <div
-                  className='faq-question'
-                  onClick={() => toggleFAQ(index)}
-                  style={{
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    color: '#333',
-                    backgroundColor: '#f8f9fa',
-                    padding: '1rem',
-                    borderRadius: '4px',
-                  }}
-                >
-                  {faq.question}
-                  <span style={{ float: 'right' }}>
-                    {expandedIndex === index ? '-' : '+'}
-                  </span>
-                </div>
-                {expandedIndex === index && (
-                  <div
-                    className='faq-answer'
-                    style={{
-                      backgroundColor: '#e9ecef',
-                      marginTop: '0.5rem',
-                      padding: '1rem',
-                      borderRadius: '4px',
-                    }}
-                  >
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+      {/* Brand Section */}
+      <section className="brand-section">
+        <div className="brand-content">
+          <h2 className="brand-title">CineNiche</h2>
+          <p className="brand-tagline">Curated Cinema for the Discerning Viewer</p>
         </div>
       </section>
-      {showCookieBanner && (
-  <div
-    style={{
-      position: 'fixed',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      backgroundColor: '#222',
-      color: '#fff',
-      padding: '1rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      zIndex: 9999,
-      boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.3)',
-      flexWrap: 'wrap',
-    }}
-  >
-    <p style={{ margin: 0 }}>
-      We use cookies to enhance your experience. By clicking “Enable Cookies,” you agree to our use of cookies.
-    </p>
-    <button
-      style={{
-        marginTop: '0.5rem',
-        padding: '0.5rem 1rem',
-        backgroundColor: '#ff4d4f',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-      }}
-      onClick={() => setShowCookieBanner(false)}
-    >
-      Enable Cookies
-    </button>
-  </div>
-)}
+
+      {/* Show preview popup for non-logged-in users */}
+      {selectedMovie && !isLoggedIn && (
+        <MoviePreviewPopup 
+          open={!!selectedMovie} 
+          onClose={() => setSelectedMovie(null)} 
+          selectedMovie={selectedMovie}
+        />
+      )}
 
     </div>
   );

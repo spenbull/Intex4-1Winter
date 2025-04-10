@@ -1,9 +1,15 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
 }
+
+.main-content {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-color-secondary);
+  color: var(--text-color);
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

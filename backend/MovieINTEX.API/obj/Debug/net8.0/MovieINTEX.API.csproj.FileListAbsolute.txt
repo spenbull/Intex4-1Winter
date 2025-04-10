@@ -467,8 +467,3 @@
 /Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/obj/Debug/net8.0/MovieINTEX.API.pdb
 /Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/obj/Debug/net8.0/MovieINTEX.API.genruntimeconfig.cache
 /Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/obj/Debug/net8.0/ref/MovieINTEX.API.dll
-/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/bin/Debug/net8.0/publish/publish/web.config
-/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/bin/Debug/net8.0/publish/publish/appsettings.Development.json
-/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/bin/Debug/net8.0/publish/publish/appsettings.json
-/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/bin/Debug/net8.0/publish/publish/MovieINTEX.API.deps.json
-/Users/spencerbullock/DeploymentFork/Intex4-1Winter/backend/MovieINTEX.API/bin/Debug/net8.0/publish/publish/MovieINTEX.API.runtimeconfig.json

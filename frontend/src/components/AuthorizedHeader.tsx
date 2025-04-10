@@ -1,40 +1,60 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './AuthorizedHeader.css';
-import Logout from './Logout';
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import '../components/PublicHeader.css';
 
-const AuthorizedHeader: React.FC = () => {
+const PublicHeader = () => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const location = useLocation();
+
+  // Don't render on admin routes
+  if (location.pathname.startsWith('/admin')) {
+    return null;
+  }
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Implement search functionality
+    console.log('Searching for:', searchQuery);
+  };
+
   return (
-    <header className='private-header'>
-      <div className='header-container'>
-        {/* Brand logo on the left */}
-        <div className='brand-logo'>
-          <Link to='/'>CineNiche</Link>
-        </div>
-        {/* Navigation links */}
-        <nav className='navigation'>
-          <ul>
-            <li>
-              <Link to='/MoviePage'>Movies</Link>
-            </li>
-            <li>
-              <Link to='/TvPage'>TV Shows</Link>
-            </li>
-            <li>
-              <Link to='/originals'>Originals</Link>
-            </li>
-          </ul>
+    <header className="public-header">
+      <div className="header-container">
+        <Link to="/" className="brand-logo">
+          CineNiche
+        </Link>
+
+        <nav className="main-nav">
+          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/tv" className="nav-link">TV Shows</Link>
+          <Link to="/movies" className="nav-link">Movies</Link>
+          <div className="search-container">
+            <button 
+              className="search-toggle"
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              aria-label="Search"
+            >
+              <MagnifyingGlassIcon className="search-icon" />
+            </button>
+            {isSearchOpen && (
+              <form className="search-form" onSubmit={handleSearch}>
+                <input
+                  type="text"
+                  placeholder="Search movies and TV..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+              </form>
+            )}
+          </div>
+          <Link to="/login" className="nav-link">Login</Link>
         </nav>
-        {/* User menu */}
-        <div className='user-menu'>
-          <Link to='/profile' className='profile-link'>
-            Profile
-          </Link>
-          <Logout>Logout</Logout>
-        </div>
       </div>
     </header>
   );
 };
 
-export default AuthorizedHeader;
+export default PublicHeader;
