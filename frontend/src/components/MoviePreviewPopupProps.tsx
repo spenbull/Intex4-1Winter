@@ -1,6 +1,6 @@
 import React from 'react';
 import './magnific-popup.css'; // Your existing popup styles
-import './MoviePopup.css'; // Shared styles for both popups
+import './MoviePopup.css'
 
 type MoviePreviewPopupProps = {
   open: boolean;
