@@ -20,6 +20,10 @@ function AuthorizeView(props: { children: React.ReactNode }) {
       try {
         const response = await fetch(url, options);
 
+        if (!response.ok) {
+          throw new Error(`Authorization failed: ${response.status} ${response.statusText}`);
+        }
+
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
           throw new Error('Invalid response format from server');
@@ -31,9 +35,10 @@ function AuthorizeView(props: { children: React.ReactNode }) {
           setUser({ email: data.email });
           setAuthorized(true);
         } else {
-          throw new Error('Invalid user session');
+          throw new Error('No email found in response');
         }
       } catch (error) {
+        console.error('🔐 Authorization error:', error);
         setAuthorized(false);
       } finally {
         setLoading(false);

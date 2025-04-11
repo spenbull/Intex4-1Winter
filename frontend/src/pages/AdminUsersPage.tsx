@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchUsers } from '../api/UsersAPI';
 import { User } from '../types/User';
 import '../components/admin-styles/admin-layout.css';
+import { Link } from 'react-router-dom';
 
 const AdminUsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -28,6 +29,43 @@ const AdminUsersPage = () => {
 
   return (
     <>
+          <div
+        style={{
+          position: 'absolute',
+          top: '1rem',
+          right: '10rem', // ⬅️ shifted more toward the center
+          zIndex: 1000,
+        }}
+      >
+<div
+  style={{
+    position: 'absolute',
+    top: '1rem',
+    left: '0.25rem',
+    zIndex: 1000,
+  }}
+>
+  <Link
+    to="/"
+    style={{
+      display: 'inline-block',
+      padding: '0.5rem 1.25rem',
+      backgroundColor: '#e53e3e',
+      color: 'white',
+      borderRadius: '6px',
+      fontWeight: 'bold',
+      textDecoration: 'none',
+      cursor: 'pointer',
+      boxShadow: 'none',
+      border: 'none',
+      outline: 'none',
+    }}
+  >
+    Logout
+  </Link>
+</div>
+
+      </div>
       <div className="page-header">
         <div className="page-header-text">
           <h1>Users</h1>

@@ -24,8 +24,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
-
 // Database contexts
 // Get base connection string from appsettings.json (with placeholder for password)
 var rawConnectionString = builder.Configuration.GetConnectionString("MovieConnection");
@@ -82,8 +80,18 @@ builder.Services.AddSingleton<IEmailSender<IdentityUser>, NoOpEmailSender<Identi
 
 var app = builder.Build();
 
-// 🔥 DEBUG: Enable detailed error messages even in production temporarily
-app.UseDeveloperExceptionPage();
+// HSTS header manually added for all requests (only in production environment)
+if (app.Environment.IsProduction())
+{
+    app.Use(async (context, next) =>
+    {
+        context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+        await next.Invoke();
+    });
+}
+
+// Ensure HTTPS redirection is also in place
+app.UseHttpsRedirection();
 
 // Swagger UI (enabled in dev only)
 if (app.Environment.IsDevelopment())
@@ -97,8 +105,6 @@ if (app.Environment.IsDevelopment())
 
 // Middleware pipeline
 app.UseCors("AllowFrontend");
-
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

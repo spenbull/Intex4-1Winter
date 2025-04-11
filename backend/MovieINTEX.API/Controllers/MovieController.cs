@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieINTEX.Data;
+using MovieINTEX.Helpers;
 using MovieINTEX.Models;
 
 namespace MovieINTEX.Controllers
@@ -30,8 +31,8 @@ public IActionResult GetMoviesPaged(
     // Handle search filter (case-insensitive, null-safe)
     if (!string.IsNullOrWhiteSpace(search))
     {
-        var trimmedSearch = search.Trim().ToLower();
-        query = query.Where(m => m.title != null && m.title.ToLower().StartsWith(trimmedSearch));
+        var cleanSearch = InputSanitizer.SanitizeInput(search).ToLower();
+        query = query.Where(m => m.title != null && m.title.ToLower().StartsWith(cleanSearch));
     }
 
     // Handle genre filters

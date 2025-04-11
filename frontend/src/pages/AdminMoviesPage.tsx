@@ -5,7 +5,7 @@ import Pagination from '../components/pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom'; // ⬅️ import Link
 
 interface Toast {
   id: number;
@@ -83,6 +83,36 @@ const AdminMoviesPage = () => {
 
   return (
     <>
+      {/* 🔓 Logout link styled like a button */}
+      <div
+  style={{
+    position: 'absolute',
+    top: '1rem',
+    right: '5rem',
+    zIndex: 1000,
+  }}
+>
+  <Link
+    to="/"
+    style={{
+      display: 'inline-block',
+      padding: '0.5rem 1.25rem',
+      backgroundColor: '#e53e3e',
+      color: 'white',
+      borderRadius: '6px',
+      fontWeight: 'bold',
+      textDecoration: 'none',
+      cursor: 'pointer',
+      boxShadow: 'none',
+      border: 'none',
+      outline: 'none',
+    }}
+  >
+    Logout
+  </Link>
+</div>
+
+
       <div className="page-header">
         <div className="page-header-text">
           <h1>Movies</h1>
@@ -118,7 +148,10 @@ const AdminMoviesPage = () => {
           <div className="empty-state-icon">🎬</div>
           <h2 className="empty-state-message">No movies found</h2>
           <p>Add your first movie to get started</p>
-          <button className="btn btn-add empty-state-action" onClick={() => setSearchParams({ add: 'true' })}>
+          <button
+            className="btn btn-add empty-state-action"
+            onClick={() => setSearchParams({ add: 'true' })}
+          >
             Add Movie
           </button>
         </div>
@@ -189,50 +222,41 @@ const AdminMoviesPage = () => {
                     </td>
                   </tr>
                   {expandedRowId === m.show_id && (
-                  <tr className="expanded-detail-row">
-                    <td colSpan={12}>
-                      <div className="expanded-card">
-                        {/* Centered Title with Optional Director */}
-                        <h3 className="expanded-title" style={{ textAlign: 'center' }}>
-                          {m.title} {m.director && <span style={{ fontWeight: 400 }}>by {m.director}</span>}
-                        </h3>
-
-                        {/* Row 1 */}
-                        <div className="expanded-grid-row">
-                          <div className="expanded-block"><strong>Type:</strong> {m.type}</div>
-                          <div className="expanded-block"><strong>Country:</strong> {m.country || '—'}</div>
-                          <div className="expanded-block"><strong>Release Year:</strong> {m.release_year}</div>
-                        </div>
-
-                        {/* Row 2: Rating, Genres, Duration */}
-                        <div className="expanded-grid-row">
-                          <div className="expanded-block"><strong>Rating:</strong> {m.rating}</div>
-                          <div className="expanded-block"><strong>Genres:</strong> {
-                            Object.entries(m)
-                              .filter(([, value]) => typeof value === 'boolean' && value)
-                              .map(([genre]) => genre)
-                              .join(', ') || '—'
-                          }</div>
-                          <div className="expanded-block"><strong>Duration:</strong> {m.duration}</div>
-                        </div>
-
-                        {/* Cast */}
-                        {m.cast && (
-                          <div className="expanded-block">
-                            <strong>Cast:</strong> {m.cast}
+                    <tr className="expanded-detail-row">
+                      <td colSpan={12}>
+                        <div className="expanded-card">
+                          <h3 className="expanded-title" style={{ textAlign: 'center' }}>
+                            {m.title} {m.director && <span style={{ fontWeight: 400 }}>by {m.director}</span>}
+                          </h3>
+                          <div className="expanded-grid-row">
+                            <div className="expanded-block"><strong>Type:</strong> {m.type}</div>
+                            <div className="expanded-block"><strong>Country:</strong> {m.country || '—'}</div>
+                            <div className="expanded-block"><strong>Release Year:</strong> {m.release_year}</div>
                           </div>
-                        )}
-
-                        {/* Description */}
-                        {m.description && (
-                          <div className="expanded-block">
-                            <strong>Description:</strong> {m.description}
+                          <div className="expanded-grid-row">
+                            <div className="expanded-block"><strong>Rating:</strong> {m.rating}</div>
+                            <div className="expanded-block"><strong>Genres:</strong> {
+                              Object.entries(m)
+                                .filter(([, value]) => typeof value === 'boolean' && value)
+                                .map(([genre]) => genre)
+                                .join(', ') || '—'
+                            }</div>
+                            <div className="expanded-block"><strong>Duration:</strong> {m.duration}</div>
                           </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                )}
+                          {m.cast && (
+                            <div className="expanded-block">
+                              <strong>Cast:</strong> {m.cast}
+                            </div>
+                          )}
+                          {m.description && (
+                            <div className="expanded-block">
+                              <strong>Description:</strong> {m.description}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
                 </>
               ))}
             </tbody>

@@ -107,7 +107,7 @@ const SignUpPage: React.FC = () => {
               placeholder="Email"
             />
           </div>
-
+<br /><br />
           {/* Step 1: Set Password */}
           {step === 1 && (
             <form className="login-form" onSubmit={(e) => e.preventDefault()}>

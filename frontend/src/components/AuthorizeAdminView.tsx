@@ -113,15 +113,6 @@ export function AdminAuthorizeView(props: { children: React.ReactNode }) {
       </UserContext.Provider>
     );
   }
-
-  console.log('[AdminAuthorizeView] Not authorized. User:', user);
-  return (
-    <div>
-      <h2>Admin Access Required</h2>
-      <p>You do not have permission to view this page.</p>
-      <p>Check the console for user data and roles.</p>
-    </div>
-  );
 }
 
 export function AuthorizedUser(props: { value: string }) {

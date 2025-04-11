@@ -37,7 +37,7 @@ const AdminSidebar = ({
       icon: '🎬',
       links: [
         { path: '/admin/movies', label: 'All Movies' },
-        { path: '/admin/movies?add=true', label: 'Add Movie' }, // 🔁 updated!
+        { path: '/admin/movies?add=true', label: 'Add Movie' },
         { path: '/admin/movies/categories', label: 'Genres' },
       ],
     },
@@ -58,7 +58,7 @@ const AdminSidebar = ({
         { path: '/admin/analytics/trends', label: 'Watch Trends' },
         { path: '/admin/analytics/ratings', label: 'Ratings Dashboard' },
       ],
-    },
+    }
   ];
 
   const toggleSection = (sectionTitle: string) => {
@@ -82,6 +82,7 @@ const AdminSidebar = ({
           {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
         </button>
       </div>
+
       <nav className="sidebar-nav">
         {sections.map((section) => (
           <div key={section.title} className={`sidebar-section ${expandedSections[section.title.toLowerCase()] ? 'expanded' : ''}`}>
@@ -108,6 +109,7 @@ const AdminSidebar = ({
             </div>
           </div>
         ))}
+        
       </nav>
     </aside>
   );
