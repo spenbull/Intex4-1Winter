@@ -1,0 +1,91 @@
+.movie-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .search-filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-top: 2rem;
+  }
+  .search-input {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #E2E8F0;
+    border-radius: 0.5rem;
+    width: 300px;
+    transition: all 0.2s ease;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+      Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  .search-input::placeholder {
+    color: #6B7280;
+    opacity: 0.8;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+  .category-filter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .category-select {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #E2E8F0;
+    border-radius: 0.5rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+      Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  .category-select:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+  /* Dark mode styles */
+  [data-theme='dark'] .search-input,
+  [data-theme='dark'] .category-select {
+    border-color: #4A5568;
+    background-color: #2D3748;
+    color: #E2E8F0;
+  }
+  [data-theme='dark'] .search-input::placeholder {
+    color: #A0AEC0;
+  }
+  [data-theme='dark'] .search-input:focus,
+  [data-theme='dark'] .category-select:focus {
+    border-color: #667EEA;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  }
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .search-filter-container {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .search-input {
+      width: 100%;
+    }
+    .category-filter {
+      width: 100%;
+    }
+    .category-select {
+      width: 100%;
+    }
+  }

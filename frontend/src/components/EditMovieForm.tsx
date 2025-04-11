@@ -3,13 +3,15 @@ import { Movie } from '../types/Movie';
 import { updateMovie } from '../api/MoviesAPI';
 import './admin-styles/EditMovieForm.css';
 
+// Props expected by the EditMovieForm component
 interface EditMovieFormProps {
   movie: Movie;
-  onSuccess: () => void;
-  onCancel: () => void;
-  theme?: 'light' | 'dark';
+  onSuccess: () => void; // callback after successful update
+  onCancel: () => void;  // callback to cancel editing
+  theme?: 'light' | 'dark'; // optional theme support
 }
 
+// Predefined genre options used in the dropdown
 const genreOptions = [
   "Action", "Adventure", "Anime Series International TV Shows", "British TV Shows Docuseries International TV Shows",
   "Children", "Comedies", "Comedies Dramas International Movies", "Comedies International Movies",
@@ -21,20 +23,23 @@ const genreOptions = [
   "TV Dramas", "Talk Shows TV Comedies", "Thrillers"
 ];
 
+// Main component for editing a movie
 const EditMovieForm = ({ movie, onSuccess, onCancel, theme = 'light' }: EditMovieFormProps) => {
   const [formData, setFormData] = useState<Movie>({ ...movie });
 
+  // Handles change for any input or select element
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handles form submission and updates movie data
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const updatedData = { ...formData };
 
-    // Normalize and set genre flag
+    // Add a flag for the selected genre (used by backend)
     const genreFlagKey = genreOptions.find((g) => g === formData.genres);
     if (genreFlagKey) {
       const normalizedKey = genreFlagKey.replace(/[^a-zA-Z0-9]/g, '');
@@ -43,20 +48,21 @@ const EditMovieForm = ({ movie, onSuccess, onCancel, theme = 'light' }: EditMovi
 
     try {
       await updateMovie(formData.show_id, updatedData);
-      onSuccess();
+      onSuccess(); // invoke parent callback on success
     } catch (err) {
       console.error("Failed to update movie:", err);
     }
   };
 
   return (
+    // Overlay container for modal styling
     <div className="admin-modal-overlay" onClick={onCancel} data-theme={theme}>
       <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
         <form onSubmit={handleSubmit} className="admin-form">
           <h2 className="admin-form-title">Edit Movie</h2>
 
           <div className="admin-form-sections">
-            {/* Basic Information Section */}
+            {/* Section: Basic Info */}
             <div className="admin-form-section">
               <h3 className="admin-form-section-title">Basic Information</h3>
               <div className="admin-form-grid">
@@ -86,7 +92,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel, theme = 'light' }: EditMovi
               </div>
             </div>
 
-            {/* Metadata Section */}
+            {/* Section: Metadata */}
             <div className="admin-form-section">
               <h3 className="admin-form-section-title">Metadata</h3>
               <div className="admin-form-grid">
@@ -112,7 +118,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel, theme = 'light' }: EditMovi
               </div>
             </div>
 
-            {/* Description Section */}
+            {/* Section: Description */}
             <div className="admin-form-section">
               <h3 className="admin-form-section-title">Description</h3>
               <div className="admin-form-grid">
@@ -128,7 +134,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel, theme = 'light' }: EditMovi
               </div>
             </div>
 
-            {/* Genre Section */}
+            {/* Section: Genre */}
             <div className="admin-form-section">
               <h3 className="admin-form-section-title">Genre</h3>
               <div className="admin-form-grid">
@@ -145,6 +151,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel, theme = 'light' }: EditMovi
             </div>
           </div>
 
+          {/* Submit / Cancel Buttons */}
           <div className="admin-form-actions">
             <button type="submit" className="admin-btn admin-btn-add">
               Edit Movie

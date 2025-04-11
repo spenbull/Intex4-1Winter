@@ -1,13 +1,18 @@
 import React, { useState, useEffect, createContext } from 'react';
 
+// Interface representing the authenticated user
 interface User {
   email: string;
   roles: string[];
 }
 
+// Backend API base URL
 const API_BASE_URL = 'https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net';
+
+// Global context to store the authenticated user's data
 const UserContext = createContext<User | null>(null);
 
+// Component to wrap children with auth-only access for any logged-in user
 function AuthorizeView(props: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -15,6 +20,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(emptyuser);
 
   useEffect(() => {
+    // Checks user authentication status on mount
     async function fetchUser() {
       try {
         const response = await fetch(`${API_BASE_URL}/pingauth`, {
@@ -25,6 +31,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
         const data = await response.json();
         console.log('[AuthorizeView] Fetched user data:', data);
 
+        // If a valid session exists, authorize user
         if (data.email) {
           setUser({ email: data.email, roles: data.roles ?? [] });
           setAuthorized(true);
@@ -41,8 +48,10 @@ function AuthorizeView(props: { children: React.ReactNode }) {
     fetchUser();
   }, []);
 
+  // Show loading state while checking
   if (loading) return <p>Loading...</p>;
 
+  // If authorized, expose user context to children
   if (authorized) {
     return (
       <UserContext.Provider value={user}>
@@ -51,6 +60,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
     );
   }
 
+  // Show fallback message if not authorized
   console.log('[AuthorizeView] Not authorized. User:', user);
   return (
     <div>
@@ -60,6 +70,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
   );
 }
 
+// Same as AuthorizeView, but also checks for admin privileges
 export function AdminAuthorizeView(props: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -67,8 +78,10 @@ export function AdminAuthorizeView(props: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(emptyuser);
 
   useEffect(() => {
+    // Checks user authentication and role status on mount
     async function fetchAdminStatus() {
       try {
+        // First ping to get logged-in email
         const pingRes = await fetch(`${API_BASE_URL}/pingauth`, {
           method: 'GET',
           credentials: 'include',
@@ -80,6 +93,7 @@ export function AdminAuthorizeView(props: { children: React.ReactNode }) {
         const email = pingData.email;
         console.log('[AdminAuthorizeView] Email from pingauth:', email);
 
+        // Second request to check roles
         const roleRes = await fetch(`${API_BASE_URL}/role/getuserroles?email=${email}`, {
           method: 'GET',
           credentials: 'include',
@@ -88,6 +102,7 @@ export function AdminAuthorizeView(props: { children: React.ReactNode }) {
         const roleData = await roleRes.json();
         console.log('[AdminAuthorizeView] Roles for user:', roleData);
 
+        // Authorize only if 'Administrator' is among the roles
         if (roleData.roles?.includes('Administrator')) {
           setUser({ email, roles: roleData.roles });
           setAuthorized(true);
@@ -104,8 +119,10 @@ export function AdminAuthorizeView(props: { children: React.ReactNode }) {
     fetchAdminStatus();
   }, []);
 
+  // Show loading indicator while verifying admin status
   if (loading) return <p>Loading...</p>;
 
+  // If admin authorized, render children with user context
   if (authorized) {
     return (
       <UserContext.Provider value={user}>
@@ -113,8 +130,11 @@ export function AdminAuthorizeView(props: { children: React.ReactNode }) {
       </UserContext.Provider>
     );
   }
+
+  // Implicitly returns undefined if not authorized — renders nothing
 }
 
+// Utility component to access current user info
 export function AuthorizedUser(props: { value: string }) {
   const user = React.useContext(UserContext);
 

@@ -9,11 +9,11 @@ using RootkitAuth.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Add core services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Swagger setup
+// Configure Swagger for API documentation
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -24,32 +24,41 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Database contexts
-// Get base connection string from appsettings.json (with placeholder for password)
+// Configure database connections
+
+// Get base connection string from appsettings.json
 var rawConnectionString = builder.Configuration.GetConnectionString("MovieConnection");
-// Get the actual password from an environment variable
+
+// Get the secure DB password from environment variables
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
-// Replace the placeholder with the actual password
+
+// Replace placeholder with actual password in connection string
 var finalConnectionString = rawConnectionString.Replace("{DB_PASSWORD}", dbPassword);
-// Inject the secure, final connection string into your DbContext
+
+// Register MovieDbContext using secure SQL Server connection
 builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlServer(finalConnectionString));
 
+// Register Identity context using SQLite for user auth
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
 
+// Set up Identity with default token providers
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// Customize claims identity options
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
 });
 
+// Use custom claims principal factory
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
 
+// Configure Identity cookie settings
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
@@ -59,9 +68,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
+// Enable authorization service
 builder.Services.AddAuthorization();
 
-// CORS setup
+// Set up CORS to allow frontend origins
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -76,11 +86,12 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Dummy email sender for dev/stub purposes
 builder.Services.AddSingleton<IEmailSender<IdentityUser>, NoOpEmailSender<IdentityUser>>();
 
 var app = builder.Build();
 
-// HSTS header manually added for all requests (only in production environment)
+// Add HSTS header in production only
 if (app.Environment.IsProduction())
 {
     app.Use(async (context, next) =>
@@ -90,10 +101,10 @@ if (app.Environment.IsProduction())
     });
 }
 
-// Ensure HTTPS redirection is also in place
+// Redirect HTTP to HTTPS
 app.UseHttpsRedirection();
 
-// Swagger UI (enabled in dev only)
+// Enable Swagger in development only
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -103,15 +114,18 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Middleware pipeline
+// Apply middleware
 app.UseCors("AllowFrontend");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map all controller routes
 app.MapControllers();
+
+// Add Identity-specific routes
 app.MapIdentityApi<IdentityUser>();
 
+// Add logout endpoint to clear auth cookie
 app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> signInManager) =>
 {
     await signInManager.SignOutAsync();
@@ -119,6 +133,7 @@ app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> s
     return Results.Ok(new { message = "Logout successful" });
 }).RequireAuthorization();
 
+// Ping endpoint to validate session and return user info
 app.MapGet("/pingauth", (ClaimsPrincipal user) =>
 {
     if (!user.Identity?.IsAuthenticated ?? false)
@@ -130,4 +145,5 @@ app.MapGet("/pingauth", (ClaimsPrincipal user) =>
     return Results.Json(new { email = email });
 }).RequireAuthorization();
 
+// Start the app
 app.Run();
