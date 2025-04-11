@@ -10,7 +10,6 @@ const SignUpPage: React.FC = () => {
   const [step, setStep] = useState(1);
   const [pricingPlan, setPricingPlan] = useState<string | null>(null);
   const [cardDetails, setCardDetails] = useState<string>('');
-  const [registrationStatus, setRegistrationStatus] = useState<string | null>(null);
   const [passwordMatchError, setPasswordMatchError] = useState<string | null>(null);
 
   const location = useLocation();
@@ -48,46 +47,9 @@ const SignUpPage: React.FC = () => {
     setPricingPlan(plan === pricingPlan ? null : plan);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (password !== confirmPassword || !pricingPlan) {
-      setRegistrationStatus('error');
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        'https://cinenichegroup0401-backend-affvedfvhnhyc4fp.eastus-01.azurewebsites.net/auth/register',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            email,
-            password,
-            rememberMe: false,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Registration failed.');
-      }
-
-      const result = await response.json();
-      console.log('✅ Registration success:', result);
-      setRegistrationStatus('success');
-
-      setTimeout(() => {
-        navigate('/');
-      }, 3000);
-    } catch (error) {
-      console.error('🚨 Registration error:', error);
-      setRegistrationStatus('error');
-    }
+  const handleRegisterClick = () => {
+    // Navigate to the homepage without making a POST request
+    navigate('/');
   };
 
   return (
@@ -107,7 +69,8 @@ const SignUpPage: React.FC = () => {
               placeholder="Email"
             />
           </div>
-<br /><br />
+          <br /><br />
+
           {/* Step 1: Set Password */}
           {step === 1 && (
             <form className="login-form" onSubmit={(e) => e.preventDefault()}>
@@ -178,7 +141,7 @@ const SignUpPage: React.FC = () => {
 
           {/* Step 3: Enter Payment Details */}
           {step === 3 && (
-            <form className="login-form" onSubmit={handleSubmit}>
+            <div className="login-form">
               <h3 className="mb-3">Enter Your Payment Details</h3>
               <div className="form-group">
                 <input
@@ -190,25 +153,13 @@ const SignUpPage: React.FC = () => {
                 />
               </div>
 
-              <button type="submit" className="login-btn">
+              <button type="button" className="login-btn" onClick={handleRegisterClick}>
                 Complete Registration
               </button>
               <button type="button" className="login-btn" onClick={handleBackStep} style={{ backgroundColor: '#666', marginTop: '1rem' }}>
                 Back
               </button>
-            </form>
-          )}
-
-          {/* Status messages */}
-          {registrationStatus === 'success' && (
-            <p className="error opacity-100" style={{ color: 'lightgreen' }}>
-              Account successfully created! Redirecting...
-            </p>
-          )}
-          {registrationStatus === 'error' && (
-            <p className="error opacity-100">
-              Error: Passwords don't match or pricing plan not selected.
-            </p>
+            </div>
           )}
         </div>
       </div>
